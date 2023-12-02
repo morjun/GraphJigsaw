@@ -25,12 +25,15 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
 
 def get_args():
     parse = argparse.ArgumentParser()
-    parse.add_argument('--train_root',type=str,default='/data/laolingjie/database/iQiYi/personai_icartoonface_rectrain/icartoonface_rectrain/')
-    parse.add_argument('--train_list',type=str,default='/data/laolingjie/database/iQiYi/personai_icartoonface_rectrain/train_lbl.list')
-    # parse.add_argument('--train_root',type=str,default='/data/laolingjie/database/Danbooru/danbooru2018/')
-    # parse.add_argument('--train_list',type=str,default='/data/laolingjie/database/Danbooru/train.txt')
-    parse.add_argument('--test_root',type=str,default='/data/laolingjie/database/iQiYi/personai_icartoonface_rectest/icartoonface_rectest')
-    parse.add_argument('--test_list',type=str,default='/data/laolingjie/database/iQiYi/personai_icartoonface_rectest/icartoonface_rectest_22500.list')
+    parse.add_argument('--train_root',type=str,default='/data/database/iQiYi/personai_icartoonface_rectrain/icartoonface_rectrain/')
+    # 이 폴더 하위에 이미지 파일들 넣어 놓으면 됨
+    parse.add_argument('--train_list',type=str,default='/data/database/iQiYi/personai_icartoonface_rectrain/train_lbl.list')
+    # 리스트 형식: 1줄에 <파일명 이미지 라벨> 이렇게 적으면 됨
+
+    # parse.add_argument('--train_root',type=str,default='/data/database/Danbooru/danbooru2018/')
+    # parse.add_argument('--train_list',type=str,default='/data/database/Danbooru/train.txt')
+    parse.add_argument('--test_root',type=str,default='/data/database/iQiYi/personai_icartoonface_rectest/icartoonface_rectest')
+    parse.add_argument('--test_list',type=str,default='/data/database/iQiYi/personai_icartoonface_rectest/icartoonface_rectest_22500.list')
     parse.add_argument('--checkpoint',type=str,default='checkpoints/',help='the path that save the model')
     parse.add_argument('--rank_dir',type=str,default='rank-n/',help='the path that save the rank reslut')
     parse.add_argument('--resume',type=bool,default=False)
