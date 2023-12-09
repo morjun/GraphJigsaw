@@ -52,10 +52,11 @@ class Dataset(data.Dataset):
         data = Image.open(img_path).convert('RGB')
         # data = data.convert('L')
         data = self.transforms(data)
-        label = np.int32(splits[1])
         if self.phase == 'train':
+            label = np.int32(splits[1])
             return data.float(), label
         else:
+            label = np.int32(splits[5])
             return data.float(),label,img_path
 
     def __len__(self):

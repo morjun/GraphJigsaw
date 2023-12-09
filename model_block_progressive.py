@@ -74,6 +74,7 @@ class GJPN(nn.Module):
 
     def forward(self,x,epoch,batch_id,after_epoch,phase='train'):
         xl1_b1,xl1_b3,xl2_b1,xl2_b4,xl3_b1,xl3_b6,xl4_b1,xl4_b3 = self.feature(x)
+        # l1~l4: c2~c5
         
         if phase == 'test':
             output =self.max3(xl4_b3)
@@ -92,9 +93,9 @@ class GJPN(nn.Module):
         #gcn inference and recontrust
         #stage 1
         if batch_id%4 ==0:
-            xl1_b1 = self.roi_pooling(xl1_b1)
-            xl1_b1 = xl1_b1.reshape((xl1_b1.size(0),xl1_b1.size(1),xl1_b1.size(2)*xl1_b1.size(3)))
-            xl1_b1 = xl1_b1[:,:,torch.randperm(xl1_b1.size(2))]
+            xl1_b1 = self.roi_pooling(xl1_b1) # feature map 크기 줄이기
+            xl1_b1 = xl1_b1.reshape((xl1_b1.size(0),xl1_b1.size(1),xl1_b1.size(2)*xl1_b1.size(3))) # (Batch,C,H*W)
+            xl1_b1 = xl1_b1[:,:,torch.randperm(xl1_b1.size(2))] #shuffle
             xl1_b1 = xl1_b1.permute(0,2,1)
 
             adj = adjacent_matrix_generator(self.block_num,xl1_b1.size(0)).cuda()

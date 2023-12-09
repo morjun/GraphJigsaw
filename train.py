@@ -25,15 +25,17 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
 
 def get_args():
     parse = argparse.ArgumentParser()
-    parse.add_argument('--train_root',type=str,default='/data/database/iQiYi/personai_icartoonface_rectrain/icartoonface_rectrain/')
+    parse.add_argument('--train_root',type=str,default='../Dataset/personai_icartoonface_rectrain/icartoonface_rectrain/')
     # 이 폴더 하위에 이미지 파일들 넣어 놓으면 됨
-    parse.add_argument('--train_list',type=str,default='/data/database/iQiYi/personai_icartoonface_rectrain/train_lbl.list')
-    # 리스트 형식: 1줄에 <파일명 이미지 라벨> 이렇게 적으면 됨
+    parse.add_argument('--train_list',type=str,default='../Dataset/personai_icartoonface_rectrain/train_lbl.txt')
+    # 리스트 형식: 1줄에 <파일명 이미지라벨> 이렇게 적으면 됨
 
     # parse.add_argument('--train_root',type=str,default='/data/database/Danbooru/danbooru2018/')
     # parse.add_argument('--train_list',type=str,default='/data/database/Danbooru/train.txt')
-    parse.add_argument('--test_root',type=str,default='/data/database/iQiYi/personai_icartoonface_rectest/icartoonface_rectest')
-    parse.add_argument('--test_list',type=str,default='/data/database/iQiYi/personai_icartoonface_rectest/icartoonface_rectest_22500.list')
+    parse.add_argument('--test_root',type=str,default='../Dataset/personai_icartoonface_rectest/icartoonface_rectest')
+    parse.add_argument('--test_list',type=str,default='../Dataset/personai_icartoonface_rectest/icartoonface_rectest_info.txt')
+    # 주의: icartoonface 기준 train set의 label과는 별개로 되어 있음
+
     parse.add_argument('--checkpoint',type=str,default='checkpoints/',help='the path that save the model')
     parse.add_argument('--rank_dir',type=str,default='rank-n/',help='the path that save the rank reslut')
     parse.add_argument('--resume',type=bool,default=False)
@@ -43,7 +45,7 @@ def get_args():
     parse.add_argument('--start_epoch',type=int,default=0)
     parse.add_argument('--nb_epoch',type=int,default=61)
     parse.add_argument('--batch_size',type=int,default=256)
-    parse.add_argument('--num_workers',type=int,default=16)
+    parse.add_argument('--num_workers',type=int,default=12)
     parse.add_argument('--block_num',type=int,default=3,help='the block size of recontrust feature node, e.g., 3*3')
     parse.add_argument('--classes_num',type=int,default=5013,help="danbooru 5127  iQiYi 5013") 
     parse.add_argument('--after_epoch',type=int,default=7)
@@ -162,7 +164,7 @@ def train():
 
     print('===>loading Model')
     backbone = resnet50()
-    backbone.load_state_dict(torch.load('../checkpoints/resnet50-19c8e357.pth'))
+    backbone.load_state_dict(torch.load('../checkpoints/resnet50-19c8e357.pth'), strict=False) # my_resnet.py에서 주소 참조하여 받아놓기
     model = GJPN(backbone,512,args.classes_num,args.block_num)
 
     if args.resume:
@@ -246,16 +248,16 @@ def train():
             total += targets.size(0)
             correct += predicted.eq(targets.data).cpu().sum()
 
-            if batch_idx % 200 ==0:
-                print(
-                    'Iteration %d Step: %d | Loss_ce: %.3f | Loss_reconstruct: %.3f | Loss_total: %.3f | Acc: %.3f%% (%d/%d)' %(
-                        epoch,batch_idx,ce_loss / (batch_idx + 1),args.alpha*reconstruct_loss / (batch_idx + 1),train_loss /(batch_idx+1),
-                        100. *float(correct)/total,correct,total))
-                with open(args.train_log,'a') as file:
-                    file.write(
-                    'Iteration %d Step: %d | Loss_ce: %.3f | Loss_reconstruct: %.3f | Loss_total: %.3f | Acc: %.3f%% (%d/%d)\n' %(
-                        epoch,batch_idx,ce_loss / (batch_idx + 1),args.alpha*reconstruct_loss / (batch_idx + 1),train_loss /(batch_idx+1),
-                        100. *float(correct)/total,correct,total))
+            # if batch_idx % 200 ==0:
+            print(
+                'Iteration %d Step: %d | Loss_ce: %.3f | Loss_reconstruct: %.3f | Loss_total: %.3f | Acc: %.3f%% (%d/%d)' %(
+                    epoch,batch_idx,ce_loss / (batch_idx + 1),args.alpha*reconstruct_loss / (batch_idx + 1),train_loss /(batch_idx+1),
+                    100. *float(correct)/total,correct,total))
+            with open(args.train_log,'a') as file:
+                file.write(
+                'Iteration %d Step: %d | Loss_ce: %.3f | Loss_reconstruct: %.3f | Loss_total: %.3f | Acc: %.3f%% (%d/%d)\n' %(
+                    epoch,batch_idx,ce_loss / (batch_idx + 1),args.alpha*reconstruct_loss / (batch_idx + 1),train_loss /(batch_idx+1),
+                    100. *float(correct)/total,correct,total))
         # scheduler.step()
         train_acc = 100. *float(correct) /total
         train_loss = train_loss /(idx+1)

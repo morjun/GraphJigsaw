@@ -220,11 +220,11 @@ class ResNet(nn.Module):
         x = self.layer2[3](x)
         xl2_b4 = x
 
-        for i in range(23):
+        for i in range(6):
             x = self.layer3[i](x)
             if i ==0:
                 xl3_b1 = x
-            if i == 22:
+            if i == 5:
                 xl3_b6 = x
 
 
