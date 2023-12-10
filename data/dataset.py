@@ -47,16 +47,16 @@ class Dataset(data.Dataset):
 
     def __getitem__(self, index):
         sample = self.imgs[index]
-        splits = sample.split()
+        splits = sample.split('\t')
         img_path = splits[0]
         data = Image.open(img_path).convert('RGB')
         # data = data.convert('L')
         data = self.transforms(data)
+        label = np.int32(splits[1])
         if self.phase == 'train':
-            label = np.int32(splits[1])
             return data.float(), label
         else:
-            label = np.int32(splits[5])
+            # label = np.int32(splits[5])
             return data.float(),label,img_path
 
     def __len__(self):

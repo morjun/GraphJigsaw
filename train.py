@@ -1,3 +1,5 @@
+#coding=utf-8
+
 import os
 import torch
 import argparse
@@ -25,15 +27,15 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
 
 def get_args():
     parse = argparse.ArgumentParser()
-    parse.add_argument('--train_root',type=str,default='../Dataset/personai_icartoonface_rectrain/icartoonface_rectrain/')
+    parse.add_argument('--train_root',type=str,default='../Dataset/dataset/')
     # 이 폴더 하위에 이미지 파일들 넣어 놓으면 됨
-    parse.add_argument('--train_list',type=str,default='../Dataset/personai_icartoonface_rectrain/train_lbl.txt')
+    parse.add_argument('--train_list',type=str,default='../Dataset/dataset/train_lbl.txt')
     # 리스트 형식: 1줄에 <파일명 이미지라벨> 이렇게 적으면 됨
 
     # parse.add_argument('--train_root',type=str,default='/data/database/Danbooru/danbooru2018/')
     # parse.add_argument('--train_list',type=str,default='/data/database/Danbooru/train.txt')
-    parse.add_argument('--test_root',type=str,default='../Dataset/personai_icartoonface_rectest/icartoonface_rectest')
-    parse.add_argument('--test_list',type=str,default='../Dataset/personai_icartoonface_rectest/icartoonface_rectest_info.txt')
+    parse.add_argument('--test_root',type=str,default='../Dataset/test/')
+    parse.add_argument('--test_list',type=str,default='../Dataset/test/test_lbl.txt')
     # 주의: icartoonface 기준 train set의 label과는 별개로 되어 있음
 
     parse.add_argument('--checkpoint',type=str,default='checkpoints/',help='the path that save the model')
@@ -43,11 +45,11 @@ def get_args():
     parse.add_argument('--train_log',type=str,default='log/xxx.log',help='the path that save the train log')
     parse.add_argument('--save_name',type=str,default='xxx')
     parse.add_argument('--start_epoch',type=int,default=0)
-    parse.add_argument('--nb_epoch',type=int,default=61)
+    parse.add_argument('--nb_epoch',type=int,default=10)
     parse.add_argument('--batch_size',type=int,default=256)
     parse.add_argument('--num_workers',type=int,default=12)
     parse.add_argument('--block_num',type=int,default=3,help='the block size of recontrust feature node, e.g., 3*3')
-    parse.add_argument('--classes_num',type=int,default=5013,help="danbooru 5127  iQiYi 5013") 
+    parse.add_argument('--classes_num',type=int,default=131,help="danbooru 5127  iQiYi 5013") 
     parse.add_argument('--after_epoch',type=int,default=7)
     parse.add_argument('--use_arcface',type=bool,default=False)
     parse.add_argument('--metric_name',type=str,default='arcface_m3_after15')

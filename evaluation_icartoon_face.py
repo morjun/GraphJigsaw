@@ -34,7 +34,11 @@ def get_label_id_dict(labels):
 def evaluation(features,labels,total_rank = 10):
 
     id_line, line_id = get_label_id_dict(labels)
-    distractor_feats = features[list(id_line[-1])]
+    try:
+        distractor_feats = features[list(id_line[-1])] # -1: 클래스 없음
+    except KeyError:
+        print("No distractor in this dataset")
+        distractor_feats = np.zeros((1,features.shape[1]))
     corroct = [0] *total_rank
     total = 0
     for i in range(len(features)):
